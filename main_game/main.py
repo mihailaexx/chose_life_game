@@ -26,6 +26,12 @@ class Menu:
         self.exit_button_text_rect = self.exit_button_text.get_rect(center=(960, 935))
         self.volume_slider = pygame.Rect(0, 0, 1240, 20)
         self.volume_slider.center = (960, 540)
+        self.volume_slider_current_level = pygame.Rect(0, 0, 0.1*1240, 20)
+        self.volume_slider_current_level.midleft = (340, 540)
+        self.int_volume_text = pygame.font.Font(None, 36).render("10", True, (255, 0, 0))
+        self.int_volume_text_rect = self.int_volume_text.get_rect(center=(960, 580))
+        self.volume_text = pygame.font.Font(None, 36).render("Volume", True, (255, 0, 0))
+        self.volume_text_rect = self.volume_text.get_rect(center=(960, 500))
         self.back_button = pygame.Rect(0, 0, 800, 220)
         self.back_button_text = pygame.font.Font(None, 72).render("Back to main menu", True, (0, 0, 0))
         self.back_button.center = (960, 935)
@@ -33,6 +39,8 @@ class Menu:
         # звуки
         # self.click_sound = pygame.mixer.Sound("click.wav")
         # self.bg_sound = pygame.mixer.music.load("bg.wav")
+    def transition(self, screen):
+        pass
     def draw(self, screen, state):
         if state == GAME_MENU: #* в меню отображать 3 кнопки - играть, настройки, выход
             screen.blit(self.bg, (0, 0))
@@ -52,11 +60,13 @@ class Menu:
             screen.blit(self.back_button_text, self.back_button_text_rect)
         elif state == GAME_SETTINGS: #* в настройках отображать слайдер громкости, кнопку назад
             screen.blit(self.bg, (0, 0))
-            pygame.draw.rect(screen, (255, 0, 0), self.volume_slider)
+            pygame.draw.rect(screen, (102, 0, 3), self.volume_slider)
+            pygame.draw.rect(screen, (255, 0, 0), self.volume_slider_current_level)
             pygame.draw.rect(screen, (255, 0, 0), self.back_button)
             screen.blit(self.back_button_text, self.back_button_text_rect)
-            self.volume_text = pygame.font.Font(None, 36).render(f"{int(pygame.mixer.music.get_volume()*100)}", True, (255, 0, 0))
-            self.volume_text_rect = self.volume_text.get_rect(center=(960, 580))
+            self.int_volume_text = pygame.font.Font(None, 36).render(f"{int(pygame.mixer.music.get_volume()*100)}", True, (255, 0, 0))
+            self.int_volume_text_rect = self.int_volume_text.get_rect(center=(960, 580))
+            screen.blit(self.int_volume_text, self.int_volume_text_rect)
             screen.blit(self.volume_text, self.volume_text_rect)
             pygame.draw.circle(screen, (0, 0, 0), (pygame.mixer.music.get_volume()*1240+340, 540), 15)
             pygame.draw.circle(screen, (255, 0, 0), (pygame.mixer.music.get_volume()*1240+340, 540), 10)
@@ -164,6 +174,8 @@ class Game:
             if self.game_state == GAME_SETTINGS:
                 if self.menu.volume_slider.collidepoint(mouse_pos):
                     pygame.mixer.music.set_volume((mouse_pos[0]-340)/1240)
+                    self.menu.volume_slider_current_level = pygame.Rect(0, 0, pygame.mixer.music.get_volume()*1240, 20)
+                    self.menu.volume_slider_current_level.midleft = (340, 540)
     def run(self):
         while True:
             if self.game_state == GAME_RUNNING:
