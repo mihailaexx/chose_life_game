@@ -7,6 +7,8 @@ NAME = None
 GAME_MENU, GAME_SETTINGS, GAME_PAUSE, GAME_RUNNING, GAME_OVER = range(5)
 FPS = 60
 DT = 0
+BASKET = False
+JOB = False
 
 def animate(screen, sprites:list, coords:tuple, current_index:int = 0):
     """Change a sprite every second
@@ -153,7 +155,7 @@ class Level:
                  event_info_text1:str = "Event contain this information1", event_info_text2:str = "Event contain this information2", event_info_text3:str = "Event contain this information3",
                  after_event_text1:str = "After event contain this information1", after_event_text2:str = "After event contain this information2", after_event_text3:str = "After event contain this information3", after_event1_bg:str = "independence_hall.png",
                  after_event_text4:str = "After event contain this information1", after_event_text5:str = "After event contain this information2", after_event_text6:str = "After event contain this information3", after_event2_bg:str = "independence_hall.png",
-                 n_of_choises = 2, change_stats:dict = None) -> None:
+                 n_of_choises = 2, change_stats:list = None) -> None:
         
         self.bg = pygame.transform.scale(pygame.image.load(f"bg_imgs/{bg_img}"), (1600, 900))
         self.after_event1_bg = pygame.transform.scale(pygame.image.load(f"bg_imgs/{after_event1_bg}"), (1600, 900))
@@ -161,7 +163,8 @@ class Level:
         self.bg_rect = self.bg.get_rect()
         self.font = pygame.font.SysFont("godofwar", 50)
         self.choosed_card = 1
-
+        self.change_stats = change_stats
+        
         self.event_info = pygame.transform.scale(pygame.image.load("assets/event/5.png"), (1000, 250))
         self.event_info_rect = self.event_info.get_rect(center=(800, 150))
         self.after_event_info_rect = self.event_info.get_rect(center=(800, 450))
@@ -263,11 +266,11 @@ class Game:
         self.level_list = [
             Level(bg_img="kbtu.png", event_info_text1="0", after_event_text1="Congratulations, you have been", after_event_text2="admitted to KBTU!", after_event_text3="(to skip click anywhere)", n_of_choises=0), # Предистория
             Level(bg_img="independence_hall.png", event_info_text1="0", after_event_text1="Introductory week has begun!", after_event_text2="You went on a tour near uni",  after_event_text3="Now everything is in your hands!", n_of_choises=0), # Предистория
-            Level(event_info_text1="After the first meeting", event_info_text2="you approached the guys and thus", event_info_text3="found your first company", card1_text="Go to PS with friends" , card2_text="Choose student club", after_event_text1="The friends turned out to be", after_event_text2="a small group of businessmen", after_event_text3="After playing they called you to work", after_event_text4="You have been asked to join", after_event_text5="many clubs, but you chose one", after_event_text6="Basketball club!", after_event1_bg="businessmans.png", after_event2_bg="basketball.png"), # 1 лвл
-            Level(bg_img="home.png" , event_info_text1="Your parents are very happy that you", event_info_text2="received a scholarship for your studies.", event_info_text3="They gave you some money", card1_text="Buy programming course" , card2_text="Keep money for yourself", after_event_text1="Your fingers ran across", after_event_text2="the keyboard", after_event_text3="You gain knowledge", after_event_text4="You kept the money for yourself", after_event_text5="If you don't study, they will be", after_event_text6="useful to you", after_event1_bg="programm_course.png", after_event2_bg="ez_money.png"), # 2 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 3 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 4 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 5 лвл
+            Level(event_info_text1="After the first meeting", event_info_text2="you approached the guys and thus", event_info_text3="found your first company", card1_text="Go to PS with friends" , card2_text="Choose student club", after_event_text1="The friends turned out to be", after_event_text2="a small group of businessmen", after_event_text3="After playing they called you to work", after_event_text4="You have been asked to join", after_event_text5="many clubs, but you chose one", after_event_text6="Basketball club!", after_event1_bg="businessmans.png", after_event2_bg="basketball.png", change_stats=[JOB, BASKET]), # 1 лвл
+            Level(bg_img="home.png" , event_info_text1="Your parents are happy that you", event_info_text2="received a scholarship for studies", event_info_text3="They gave you some money", card1_text="Buy programming course" , card2_text="Keep money for yourself", after_event_text1="Your fingers ran across", after_event_text2="the keyboard", after_event_text3="You gain knowledge", after_event_text4="You kept the money for yourself", after_event_text5="If you don't study, they will be", after_event_text6="useful to you", after_event1_bg="programm_course.png", after_event2_bg="ez_money.png"), # 2 лвл
+            Level(bg_img="study.png" , event_info_text1="The introductory week flew by,", event_info_text2="you just went to classes and understand", event_info_text3="that you need to learn discrete", card1_text="Buy a course from an ad" , card2_text="Learn subject yourself", after_event_text1="You were unlucky :(", after_event_text2="The course you bought turned out ", after_event_text3="to be a dud and you lose money", after_event_text4="You decided to sit down and", after_event_text5="read the books on your own", after_event_text6="It was a good decision", after_event1_bg="loser.png", after_event2_bg="brain_power.png"), # 3 лвл
+            Level(bg_img="beach.png" , event_info_text1="", event_info_text2="You are at the student initiation", event_info_text3="", card1_text="Watch concert in the rain" , card2_text="Hide from the rain", after_event_text1="", after_event_text2="You are wet but happy!", after_event_text3="", after_event_text4="Nothing much happened while", after_event_text5="you were in the building", after_event_text6="You missed the best part :(", after_event1_bg="wetnhappy.png", after_event2_bg="inbuilding.png"), # 4 лвл
+            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms you have free time", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 5 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 6 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 7 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg="", n_of_choises=3), # 8 лвл
@@ -340,6 +343,8 @@ class Game:
                                 self.current_level.choosed_card = 1
                                 self.current_level.n_of_card = 0
                                 self.current_level.bg = self.current_level.after_event1_bg
+                                if self.current_level.change_stats:
+                                    self.current_level.change_stats[0] = True
                         elif self.current_level.card2.rect.collidepoint(mouse_pos):
                             if self.current_level.n_of_card != 0:
                                 print("card2")
@@ -347,6 +352,8 @@ class Game:
                                 self.current_level.choosed_card = 2
                                 self.current_level.n_of_card = 0
                                 self.current_level.bg = self.current_level.after_event2_bg
+                                if self.current_level.change_stats:
+                                    self.current_level.change_stats[1] = True
                     # elif self.current_level.n_of_card == 3:
                     #     if self.current_level.card1.rect.collidepoint(mouse_pos):
                     #         if self.current_level.n_of_card != 0:
