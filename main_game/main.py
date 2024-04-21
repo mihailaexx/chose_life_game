@@ -90,8 +90,8 @@ class Menu:
     def __init__(self) -> None:
         self.bg = pygame.transform.scale(pygame.image.load("bg_imgs/menu.png"), (1600, 900))
         
-        font = pygame.font.SysFont("godofwar", 90)
-        self.name = font.render("Choice of students", True, (151,160,223))
+        self.font = pygame.font.SysFont("godofwar", 90)
+        self.name = self.font.render("Choice of students", True, (151,160,223))
         self.name_rect = self.name.get_rect(center=(800, 100))
         button_image = pygame.transform.scale(pygame.image.load("assets/button/3.png"), (600, 150))
         self.button_offset = 0
@@ -143,6 +143,8 @@ class Menu:
             self.back_button.draw(screen)
         elif state == GAME_OVER:
             screen.fill((0, 0, 0))
+            game_over = self.font.render("game over, thx you <3", True, (151,160,223))
+            screen.blit(game_over, game_over.get_rect(center=(800, 150)))
             
         screen.blit(self.name, self.name_rect)
 
@@ -154,6 +156,7 @@ class Level:
                  after_event_text1:str = "After event contain this information1", after_event_text2:str = "After event contain this information2", after_event_text3:str = "After event contain this information3", after_event1_bg:str = "independence_hall.png",
                  after_event_text4:str = "After event contain this information1", after_event_text5:str = "After event contain this information2", after_event_text6:str = "After event contain this information3", after_event2_bg:str = "independence_hall.png",
                  card1_img:str = "card1.png", card2_img:str = "card2.png", card3_img:str = "card3.png",
+                 card1_stat:list = 0, card2_stat:list = 0, 
                  n_of_choises = 2, change_stats:list = None) -> None:
         
         self.bg = pygame.transform.scale(pygame.image.load(f"bg_imgs/{bg_img}"), (1600, 900))
@@ -275,9 +278,9 @@ class Game:
             Level(bg_img="home.png" , event_info_text1="Your parents are happy that you", event_info_text2="received a scholarship for studies", event_info_text3="They gave you some money", card1_text="Buy programming course" , card2_text="Keep money for yourself", after_event_text1="Your fingers ran across", after_event_text2="the keyboard", after_event_text3="You gain knowledge", after_event_text4="You kept the money for yourself", after_event_text5="If you don't study, they will be", after_event_text6="useful to you", after_event1_bg="programm_course.png", after_event2_bg="ez_money.png"), # 2 лвл
             Level(bg_img="study.png" , event_info_text1="The introductory week flew by,", event_info_text2="you just went to classes and understand", event_info_text3="that you need to learn discrete", card1_text="Buy a course from an ad" , card2_text="Learn subject yourself", after_event_text1="You were unlucky :(", after_event_text2="The course you bought turned out ", after_event_text3="to be a dud and you lose money", after_event_text4="You decided to sit down and", after_event_text5="read the books on your own", after_event_text6="It was a good decision", after_event1_bg="loser.png", after_event2_bg="brain_power.png"), # 3 лвл
             Level(bg_img="beach.png" , event_info_text1="You are at the student initiation", event_info_text2="on the shore of the reservoir", event_info_text3="Suddenly it started to rain", card1_text="Watch concert in the rain" , card2_text="Hide from the rain", after_event_text1="", after_event_text2="You are wet but happy!", after_event_text3="", after_event_text4="Nothing much happened while", after_event_text5="you were in the building", after_event_text6="You missed the best part :(", after_event1_bg="wetnhappy.png", after_event2_bg="inbuilding.png"), # 4 лвл
-            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms", event_info_text3="you have free time", card1_text=("Play basketball game" if self.player.basket else "Go to work") , card2_text="Go to club", after_event_text1="", after_event_text2=("Your team won the championship" if self.player.basket else "After working for 3 hours you realized"), after_event_text3=("" if self.player.basket else "that this is not your thing"), after_event_text4="", after_event_text5="You had a great time hanging out with friends", after_event_text6="", after_event1_bg=("basket_win.png" if self.player.basket else "no_work.png"), after_event2_bg="club.png", card1_img=("basketball.png" if self.player.basket else "work.png")), # 5 лвл
+            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms", event_info_text3="you have free time", card1_text=("Play basketball game" if self.player.basket else "Go to work") , card2_text="Go to club", after_event_text1="" if self.player.basket else "After working for 3 hours", after_event_text2=("Your team won the championship" if self.player.basket else "you realized"), after_event_text3=("" if self.player.basket else "that this is not your thing"), after_event_text4="", after_event_text5="You had a great time hanging out with friends", after_event_text6="", after_event1_bg=("basket_win.png" if self.player.basket else "no_work.png"), after_event2_bg="club.png", card1_img=("basketball.png" if self.player.basket else "work.png")), # 5 лвл
             Level(bg_img="snow_almaty.png" , event_info_text1="It's been getting colder in Almaty lately", event_info_text2="The first snow even fell!", event_info_text3="But unfortunately you are sick", card1_text="Stay home" , card2_text="Still go to the lecture", after_event_text1="you missed one day and", after_event_text2="successfully recovered", after_event_text3="maybe the disease wasn't that bad", after_event_text4="You've completed today's classes", after_event_text5="There weren't many of them today", after_event_text6="and you didn't get sicker.", after_event1_bg="home_with_ill.png", after_event2_bg="snow_kbtu.png"), # 6 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 7 лвл
+            Level(bg_img="deep_snow.png" , event_info_text1="Weekend passed and snow fell knee-deep", event_info_text2="Many students order a taxi", event_info_text3="Follow their example?", card1_text="Choose Taxi" , card2_text="Choose Bus", after_event_text1="You got to the university", after_event_text2="comfortably and made it to", after_event_text3="your classes on time", after_event_text4="Your feet were trampled and", after_event_text5="you were late for the lecture", after_event_text6="There are bad days in life :(", after_event1_bg="snow_kbtu.png", after_event2_bg="crowded_bus.png"), # 7 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg="", n_of_choises=3), # 8 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 9 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 10 лвл
