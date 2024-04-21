@@ -7,8 +7,6 @@ NAME = None
 GAME_MENU, GAME_SETTINGS, GAME_PAUSE, GAME_RUNNING, GAME_OVER = range(5)
 FPS = 60
 DT = 0
-BASKET = False
-JOB = False
 
 def animate(screen, sprites:list, coords:tuple, current_index:int = 0):
     """Change a sprite every second
@@ -229,7 +227,7 @@ class Level:
             self.card1.draw(screen)
             
             self.card2 = Button(image_center_pos=(1075, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card2_img}"), 
                                 text=self.card2_text, text_center_pos=(1075, 800), font_size=36, text_color=(151,160,223))
             self.card2.draw(screen)
         elif self.n_of_card == 3:
@@ -244,12 +242,12 @@ class Level:
             self.card1.draw(screen)
 
             self.card2 = Button(image_center_pos=(800, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card2_img}"), 
                                 text=self.card2_text, text_center_pos=(800, 800), font_size=36, text_color=(151,160,223))
             self.card2.draw(screen)
 
             self.card3 = Button(image_center_pos=(1350, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card3_img}"), 
                                 text=self.card3_text, text_center_pos=(1150, 800), font_size=36, text_color=(151,160,223))
             self.card3.draw(screen)
         
@@ -260,6 +258,8 @@ class Player:
         self.mood = 0
         self.money = 0
         self.status = None
+        self.basket = False
+        self.job = False
         self.icon = "" #* иконка игрока, будет 3 спрайта - счастливый, нейтральный, грустный
 
 class Game:
@@ -267,15 +267,16 @@ class Game:
         self.screen = pygame.display.set_mode((1600, 900))
         self.game_state = GAME_MENU
         self.current_level_index = 0
+        self.player = Player()
         self.level_list = [
             Level(bg_img="kbtu.png", event_info_text1="0", after_event_text1="Congratulations, you have been", after_event_text2="admitted to KBTU!", after_event_text3="(to skip click anywhere)", n_of_choises=0), # Предистория
             Level(bg_img="independence_hall.png", event_info_text1="0", after_event_text1="Introductory week has begun!", after_event_text2="You went on a tour near uni",  after_event_text3="Now everything is in your hands!", n_of_choises=0), # Предистория
-            Level(event_info_text1="After the first meeting", event_info_text2="you approached the guys and thus", event_info_text3="found your first company", card1_text="Go to PS with friends" , card2_text="Choose student club", after_event_text1="The friends turned out to be", after_event_text2="a small group of businessmen", after_event_text3="After playing they called you to work", after_event_text4="You have been asked to join", after_event_text5="many clubs, but you chose one", after_event_text6="Basketball club!", after_event1_bg="businessmans.png", after_event2_bg="basketball.png", change_stats=[JOB, BASKET]), # 1 лвл
+            Level(event_info_text1="After the first meeting", event_info_text2="you approached the guys and thus", event_info_text3="found your first company", card1_text="Go to PS with friends" , card2_text="Choose student club", after_event_text1="The friends turned out to be", after_event_text2="a small group of businessmen", after_event_text3="After playing they called you to work", after_event_text4="You have been asked to join", after_event_text5="many clubs, but you chose one", after_event_text6="Basketball club!", after_event1_bg="businessmans.png", after_event2_bg="basketball.png", change_stats=[self.player.job, self.player.basket]), # 1 лвл
             Level(bg_img="home.png" , event_info_text1="Your parents are happy that you", event_info_text2="received a scholarship for studies", event_info_text3="They gave you some money", card1_text="Buy programming course" , card2_text="Keep money for yourself", after_event_text1="Your fingers ran across", after_event_text2="the keyboard", after_event_text3="You gain knowledge", after_event_text4="You kept the money for yourself", after_event_text5="If you don't study, they will be", after_event_text6="useful to you", after_event1_bg="programm_course.png", after_event2_bg="ez_money.png"), # 2 лвл
             Level(bg_img="study.png" , event_info_text1="The introductory week flew by,", event_info_text2="you just went to classes and understand", event_info_text3="that you need to learn discrete", card1_text="Buy a course from an ad" , card2_text="Learn subject yourself", after_event_text1="You were unlucky :(", after_event_text2="The course you bought turned out ", after_event_text3="to be a dud and you lose money", after_event_text4="You decided to sit down and", after_event_text5="read the books on your own", after_event_text6="It was a good decision", after_event1_bg="loser.png", after_event2_bg="brain_power.png"), # 3 лвл
-            Level(bg_img="beach.png" , event_info_text1="", event_info_text2="You are at the student initiation", event_info_text3="", card1_text="Watch concert in the rain" , card2_text="Hide from the rain", after_event_text1="", after_event_text2="You are wet but happy!", after_event_text3="", after_event_text4="Nothing much happened while", after_event_text5="you were in the building", after_event_text6="You missed the best part :(", after_event1_bg="wetnhappy.png", after_event2_bg="inbuilding.png"), # 4 лвл
-            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms", event_info_text3="you have free time", card1_text="Play basketball game" if BASKET else "Go to work" , card2_text="Go to club", after_event_text1="", after_event_text2="Your team won the championship" if BASKET else "After working for 3 hours you realized", after_event_text3="" if BASKET else "that this is not your thing", after_event_text4="", after_event_text5="You had a great time hanging out with friends", after_event_text6="", after_event1_bg="basket_win.png" if BASKET else "no_work.png", after_event2_bg="club.png"), # 5 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 6 лвл
+            Level(bg_img="beach.png" , event_info_text1="You are at the student initiation", event_info_text2="on the shore of the reservoir", event_info_text3="Suddenly it started to rain", card1_text="Watch concert in the rain" , card2_text="Hide from the rain", after_event_text1="", after_event_text2="You are wet but happy!", after_event_text3="", after_event_text4="Nothing much happened while", after_event_text5="you were in the building", after_event_text6="You missed the best part :(", after_event1_bg="wetnhappy.png", after_event2_bg="inbuilding.png"), # 4 лвл
+            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms", event_info_text3="you have free time", card1_text=("Play basketball game" if self.player.basket else "Go to work") , card2_text="Go to club", after_event_text1="", after_event_text2=("Your team won the championship" if self.player.basket else "After working for 3 hours you realized"), after_event_text3=("" if self.player.basket else "that this is not your thing"), after_event_text4="", after_event_text5="You had a great time hanging out with friends", after_event_text6="", after_event1_bg=("basket_win.png" if self.player.basket else "no_work.png"), after_event2_bg="club.png", card1_img=("basketball.png" if self.player.basket else "work.png")), # 5 лвл
+            Level(bg_img="snow_almaty.png" , event_info_text1="It's been getting colder in Almaty lately", event_info_text2="The first snow even fell!", event_info_text3="But unfortunately you are sick", card1_text="Stay home" , card2_text="Still go to the lecture", after_event_text1="you missed one day and", after_event_text2="successfully recovered", after_event_text3="maybe the disease wasn't that bad", after_event_text4="You've completed today's classes", after_event_text5="There weren't many of them today", after_event_text6="and you didn't get sicker.", after_event1_bg="home_with_ill.png", after_event2_bg="snow_kbtu.png"), # 6 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 7 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg="", n_of_choises=3), # 8 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 9 лвл
@@ -312,15 +313,6 @@ class Game:
                         sys.exit()
                 if event.key == pygame.K_LEFT and self.game_state == GAME_RUNNING:
                     if self.current_level_index > 0:
-                        # if self.current_level.n_of_card == 0:
-                        #     if self.current_level_index not in [8, 15]:
-                        #         print("2")
-                        #         self.current_level.n_of_card == 2
-                        #     else:
-                        #         print("3")
-                        #         self.current_level.n_of_card == 3
-                        # else:
-                        #     print("level")
                             self.current_level_index -= 1
                             self.current_level = self.level_list[self.current_level_index]
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -343,37 +335,37 @@ class Game:
                         if self.current_level.card1.rect.collidepoint(mouse_pos):
                             if self.current_level.n_of_card != 0:
                                 print("card1")
+                                if self.current_level.change_stats:
+                                    self.current_level.change_stats[0] = True
                                 self.menu.click_sound.play()
                                 self.current_level.choosed_card = 1
                                 self.current_level.n_of_card = 0
                                 self.current_level.bg = self.current_level.after_event1_bg
-                                if self.current_level.change_stats:
-                                    self.current_level.change_stats[0] = True
                         elif self.current_level.card2.rect.collidepoint(mouse_pos):
                             if self.current_level.n_of_card != 0:
                                 print("card2")
+                                if self.current_level.change_stats:
+                                    self.current_level.change_stats[1] = True
                                 self.menu.click_sound.play()
                                 self.current_level.choosed_card = 2
                                 self.current_level.n_of_card = 0
                                 self.current_level.bg = self.current_level.after_event2_bg
-                                if self.current_level.change_stats:
-                                    self.current_level.change_stats[1] = True
-                    # elif self.current_level.n_of_card == 3:
-                    #     if self.current_level.card1.rect.collidepoint(mouse_pos):
-                    #         if self.current_level.n_of_card != 0:
-                    #             print("card1")
-                    #             self.current_level.choosed_card = 1
-                    #             self.current_level.n_of_card = 0
-                    #     elif self.current_level.card2.rect.collidepoint(mouse_pos):
-                    #         if self.current_level.n_of_card != 0:
-                    #             print("card2")
-                    #             self.current_level.choosed_card = 2
-                    #             self.current_level.n_of_card = 0
-                    #     elif self.current_level.card3.rect.collidepoint(mouse_pos):
-                    #         if self.current_level.n_of_card != 0:
-                    #             print("card3")
-                    #             self.current_level.choosed_card = 3
-                    #             self.current_level.n_of_card = 0
+                    elif self.current_level.n_of_card == 3:
+                        if self.current_level.card1.rect.collidepoint(mouse_pos):
+                            if self.current_level.n_of_card != 0:
+                                print("card1")
+                                self.current_level.choosed_card = 1
+                                self.current_level.n_of_card = 0
+                        elif self.current_level.card2.rect.collidepoint(mouse_pos):
+                            if self.current_level.n_of_card != 0:
+                                print("card2")
+                                self.current_level.choosed_card = 2
+                                self.current_level.n_of_card = 0
+                        elif self.current_level.card3.rect.collidepoint(mouse_pos):
+                            if self.current_level.n_of_card != 0:
+                                print("card3")
+                                self.current_level.choosed_card = 3
+                                self.current_level.n_of_card = 0
             if event.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
                 if self.game_state == GAME_MENU:
                     if self.menu.play_button.handle_event(event, mouse_pos):
