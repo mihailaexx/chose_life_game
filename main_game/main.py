@@ -52,16 +52,47 @@ class Button:
             self.pressed = False
         return False
 
+class Slider:
+    def __init__(self, center:tuple, basic_volume:float, name:str) -> None:
+        self.center = center
+        self.name = name
+        self.volume = basic_volume
+        self.slider = pygame.Rect(0, 0, 1001, 20)
+        self.slider.center = self.center
+        self.slider_current_level = pygame.Rect(0, 0, self.volume*1000, 20)
+        self.slider_current_level.midleft = (300, self.center[1])
+        self.light_color = (151,160,223)
+        self.dark_color = (31,36,75)
+        self.click_sound = pygame.mixer.Sound("sounds/pop.mp3")
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.dark_color, self.slider)
+        pygame.draw.rect(screen, self.light_color, self.slider_current_level)
+        font = pygame.font.SysFont("godofwar", 36)
+        volume_text_int = font.render(f"{int(self.volume*100)}", True, self.light_color)
+        volume_text_int_rect = volume_text_int.get_rect(center=(self.center[0],self.center[1]+50))
+        volume_text = font.render(self.name, True, self.light_color)
+        volume_text_rect = volume_text.get_rect(center=(self.center[0],self.center[1]-50))
+        screen.blit(volume_text_int, volume_text_int_rect)
+        screen.blit(volume_text, volume_text_rect)
+        pygame.draw.circle(screen, (0, 0, 0), (self.volume*1000+300, self.center[1]), 15)
+        pygame.draw.circle(screen, self.light_color, (self.volume*1000+300, self.center[1]), 10)
+    def handle_event(self, mouse_pos):
+        if pygame.mouse.get_pressed()[0]:
+            if self.slider.collidepoint(mouse_pos):
+                self.volume = (mouse_pos[0]-300)/1000
+                self.slider_current_level = pygame.Rect(0, 0, self.volume*1000, 20)
+                self.slider_current_level.midleft = (300, self.center[1])
+                self.click_sound.play()
+
 class Menu:
     """Menu class
     """
     def __init__(self) -> None:
-        self.bg = pygame.transform.scale(pygame.image.load("bg_imgs/kbtu.png"), (1600, 900))
+        self.bg = pygame.transform.scale(pygame.image.load("bg_imgs/menu.png"), (1600, 900))
+        
         font = pygame.font.SysFont("godofwar", 90)
-        self.name1 = font.render("Choose of life:", True, (0, 0, 0))
-        self.name1_rect = self.name1.get_rect(center=(800, 50))
-        self.name2 = font.render("Teenagers", True, (0, 0, 0))
-        self.name2_rect = self.name2.get_rect(center=(800, 150))
+        self.name = font.render("Choice of students", True, (151,160,223))
+        self.name_rect = self.name.get_rect(center=(800, 100))
         button_image = pygame.transform.scale(pygame.image.load("assets/button/3.png"), (600, 150))
         self.button_offset = 0
  
@@ -75,13 +106,11 @@ class Menu:
 
         self.back_button = Button(image_center_pos=(800, 775), image=button_image, text="Menu")
 
-        self.volume_slider = pygame.Rect(0, 0, 1001, 20)
-        self.volume_slider.center = (800, 450)
-        self.volume_slider_current_level = pygame.Rect(0, 0, 0.1*1000, 20)
-        self.volume_slider_current_level.midleft = (300, 450)
+        self.volume_slider = Slider((800, 400), 0.1, "Music Volume")
+        self.sfx_volume_slider = Slider((800, 600), 0.1, "SFX Volume")
 
         # звуки
-        # self.click_sound = pygame.mixer.Sound("click.wav")
+        self.click_sound = pygame.mixer.Sound("sounds/click.mp3")
         # self.bg_sound = pygame.mixer.music.load("bg.wav")
     def draw(self, screen, state, level_index):
         if state == GAME_MENU:
@@ -107,46 +136,56 @@ class Menu:
         elif state == GAME_SETTINGS:
             screen.blit(self.bg, (0, 0))
 
-            pygame.draw.rect(screen, (31,36,75), self.volume_slider)
-            pygame.draw.rect(screen, (151,160,223), self.volume_slider_current_level)
-            font = pygame.font.SysFont("godofwar", 36)
-            int_volume_text = font.render(f"{int(pygame.mixer.music.get_volume()*100)}", True, (151,160,223))
-            int_volume_text_rect = int_volume_text.get_rect(center=(800, 500))
-            volume_text = font.render("Volume", True, (151,160,223))
-            volume_text_rect = volume_text.get_rect(center=(800, 400))
-            screen.blit(int_volume_text, int_volume_text_rect)
-            screen.blit(volume_text, volume_text_rect)
-
-            pygame.draw.circle(screen, (0, 0, 0), (pygame.mixer.music.get_volume()*1000+300, 450), 15)
-            pygame.draw.circle(screen, (151,160,223), (pygame.mixer.music.get_volume()*1000+300, 450), 10)
-
+            self.volume_slider.draw(screen)
+            
+            self.sfx_volume_slider.draw(screen)
+            
             self.back_button.draw(screen)
         elif state == GAME_OVER:
             screen.fill((0, 0, 0))
             
-        screen.blit(self.name1, self.name1_rect)
-        screen.blit(self.name2, self.name2_rect)
+        screen.blit(self.name, self.name_rect)
 
 class Level:
     """Level class
     """
-    def __init__(self, bg_img:str = "independence_hall.png", event_info_text:str = "Event contain this information", after_event_text:str = "After event contain this information", first_card_img:str = None, first_card_action: dict = None, 
+    def __init__(self, bg_img:str = "independence_hall.png", 
+                 event_info_text1:str = "Event contain this information1", event_info_text2:str = "Event contain this information2", event_info_text3:str = "Event contain this information3",
+                 after_event_text1:str = "After event contain this information1", after_event_text2:str = "After event contain this information2", after_event_text3:str = "After event contain this information3",
+                 after_event_text4:str = "After event contain this information1", after_event_text5:str = "After event contain this information2", after_event_text6:str = "After event contain this information3",
+                 first_card_img:str = None, first_card_action: dict = None, 
                  second_card_img:str = None, second_card_action: dict = None, 
                  third_card_img:str = None, third_card_action: dict = None, 
                  n_of_choises = 2, change_status:str = None) -> None:
+        
         self.bg = pygame.transform.scale(pygame.image.load(f"bg_imgs/{bg_img}"), (1600, 900))
         self.bg_rect = self.bg.get_rect()
-        font = pygame.font.SysFont("godofwar", 50)
+        self.font = pygame.font.SysFont("godofwar", 50)
+        self.choosed_card = 1
 
         self.event_info = pygame.transform.scale(pygame.image.load("assets/event/5.png"), (1000, 250))
         self.event_info_rect = self.event_info.get_rect(center=(800, 150))
         
-        self.event_info_text = font.render(event_info_text, True, (0, 0, 0))
-        self.event_info_text_rect = self.event_info_text.get_rect(center=(800, 150))
-
-        self.after_event_text = font.render(after_event_text, True, (0, 0, 0))
-        self.after_evevt_text_rect = self.after_event_text.get_rect(center=(800, 150))
-
+        self.event_info_text1 = self.font.render(event_info_text1, True, (0, 0, 0))
+        self.event_info_text_rect1 = self.event_info_text1.get_rect(center=(800, 100))
+        self.event_info_text2 = self.font.render(event_info_text2, True, (0, 0, 0))
+        self.event_info_text_rect2 = self.event_info_text2.get_rect(center=(800, 150))
+        self.event_info_text3 = self.font.render(event_info_text3, True, (0, 0, 0))
+        self.event_info_text_rect3 = self.event_info_text3.get_rect(center=(800, 200))
+        
+        self.after_event_text1 = self.font.render(after_event_text1, True, (0, 0, 0))
+        self.after_evevt_text_rect1 = self.after_event_text1.get_rect(center=(800, 100))
+        self.after_event_text2 = self.font.render(after_event_text2, True, (0, 0, 0))
+        self.after_evevt_text_rect2 = self.after_event_text2.get_rect(center=(800, 150))
+        self.after_event_text3 = self.font.render(after_event_text3, True, (0, 0, 0))
+        self.after_evevt_text_rect3 = self.after_event_text3.get_rect(center=(800, 200))
+        self.after_event_text4 = self.font.render(after_event_text5, True, (0, 0, 0))
+        self.after_evevt_text_rect4 = self.after_event_text4.get_rect(center=(800, 100))
+        self.after_event_text5 = self.font.render(after_event_text5, True, (0, 0, 0))
+        self.after_evevt_text_rect5 = self.after_event_text5.get_rect(center=(800, 150))
+        self.after_event_text6 = self.font.render(after_event_text6, True, (0, 0, 0))
+        self.after_evevt_text_rect6 = self.after_event_text6.get_rect(center=(800, 200))
+        
         self.pause_button = pygame.transform.scale(pygame.image.load("assets/settings.png"), (100, 100))
         self.pause_button_rect = self.pause_button.get_rect(topleft=(20, 20))
         
@@ -159,9 +198,18 @@ class Level:
         screen.blit(self.event_info, self.event_info_rect)
         if self.n_of_card == 0:
             # pygame.draw.rect(screen, (255, 0, 0), self.after_event_info)
-            screen.blit(self.after_event_text, self.after_evevt_text_rect)
+            if self.choosed_card == 1:
+                screen.blit(self.after_event_text1, self.after_evevt_text_rect1)
+                screen.blit(self.after_event_text2, self.after_evevt_text_rect2)
+                screen.blit(self.after_event_text3, self.after_evevt_text_rect3)
+            elif self.choosed_card == 2:
+                screen.blit(self.after_event_text4, self.after_evevt_text_rect4)
+                screen.blit(self.after_event_text5, self.after_evevt_text_rect5)
+                screen.blit(self.after_event_text6, self.after_evevt_text_rect6)
         elif self.n_of_card == 2:
-            screen.blit(self.event_info_text, self.event_info_text_rect)
+            screen.blit(self.event_info_text1, self.event_info_text_rect1)
+            screen.blit(self.event_info_text2, self.event_info_text_rect2)
+            screen.blit(self.event_info_text3, self.event_info_text_rect3)
             
             self.card1 = pygame.Rect(0, 0, 450, 400)
             self.card1.center = (525, 650)
@@ -177,7 +225,9 @@ class Level:
             #                     image=pygame.transform.scale(pygame.image.load(f"assets/level{current_level_index+1}/card2.png"), (450, 400)), 
             #                     text="Card2", image_center_pos = (1075, 800), font_size=36)
         elif self.n_of_card == 3:
-            screen.blit(self.event_info_text, self.event_info_text_rect)
+            screen.blit(self.event_info_text1, self.event_info_text_rect1)
+            screen.blit(self.event_info_text2, self.event_info_text_rect2)
+            screen.blit(self.event_info_text3, self.event_info_text_rect3)
             
             self.card1 = pygame.Rect(0, 0, 300, 400)
             self.card1.center = (450, 650)
@@ -215,23 +265,23 @@ class Game:
         self.game_state = GAME_MENU
         self.current_level_index = 0
         self.level_list = [
-            Level(event_info_text="0", after_event_text="0", n_of_choises=0), # Предистория
-            Level(event_info_text="1", after_event_text="1"), # 1 лвл
-            Level(event_info_text="2", after_event_text="2"), # 2 лвл
-            Level(event_info_text="3", after_event_text="3"), # 3 лвл
-            Level(event_info_text="4", after_event_text="4"), # 4 лвл
-            Level(event_info_text="5", after_event_text="5"), # 5 лвл
-            Level(event_info_text="6", after_event_text="6"), # 6 лвл
-            Level(event_info_text="7", after_event_text="7"), # 7 лвл
-            Level(event_info_text="8", after_event_text="8"), # 8 лвл
-            Level(event_info_text="9", after_event_text="9"), # 9 лвл
-            Level(event_info_text="10", after_event_text="10"), # 10 лвл
-            Level(event_info_text="11", after_event_text="11"), # 11 лвл
-            Level(event_info_text="12", after_event_text="12"), # 12 лвл
-            Level(event_info_text="13", after_event_text="13"), # 13 лвл
-            Level(event_info_text="14", after_event_text="14"), # 14 лвл
-            Level(event_info_text="15", after_event_text="15"), # 15 лвл
-            Level(event_info_text="16", after_event_text="16") # 16 лвл
+            Level(event_info_text1="0", after_event_text1="Congratulations, you have been", after_event_text2="admitted to KBTU! (click to cont.)", n_of_choises=0), # Предистория
+            Level(event_info_text1="Introductory week has begun!", event_info_text2="You went on a tour near uni", event_info_text3="and met the first company", after_event_text1="1", after_event_text2="2", after_event_text3="3", after_event_text4="4", after_event_text5="5", after_event_text6="6"), # 1 лвл
+            Level(event_info_text1="2", after_event_text1="2"), # 2 лвл
+            Level(event_info_text1="3", after_event_text1="3"), # 3 лвл
+            Level(event_info_text1="4", after_event_text1="4"), # 4 лвл
+            Level(event_info_text1="5", after_event_text1="5"), # 5 лвл
+            Level(event_info_text1="6", after_event_text1="6"), # 6 лвл
+            Level(event_info_text1="7", after_event_text1="7"), # 7 лвл
+            Level(event_info_text1="8", after_event_text1="8"), # 8 лвл
+            Level(event_info_text1="9", after_event_text1="9"), # 9 лвл
+            Level(event_info_text1="10", after_event_text1="10"), # 10 лвл
+            Level(event_info_text1="11", after_event_text1="11"), # 11 лвл
+            Level(event_info_text1="12", after_event_text1="12"), # 12 лвл
+            Level(event_info_text1="13", after_event_text1="13"), # 13 лвл
+            Level(event_info_text1="14", after_event_text1="14"), # 14 лвл
+            Level(event_info_text1="15", after_event_text1="15"), # 15 лвл
+            Level(event_info_text1="16", after_event_text1="16") # 16 лвл
         ]
         self.menu = Menu()
         self.reset()
@@ -258,9 +308,17 @@ class Game:
                         sys.exit()
                 if event.key == pygame.K_LEFT and self.game_state == GAME_RUNNING:
                     if self.current_level_index > 0:
-                        print("force back")
-                        self.current_level_index -= 1
-                        self.current_level = self.level_list[self.current_level_index]
+                        # if self.current_level.n_of_card == 0:
+                        #     if self.current_level_index not in [8, 15]:
+                        #         print("2")
+                        #         self.current_level.n_of_card == 2
+                        #     else:
+                        #         print("3")
+                        #         self.current_level.n_of_card == 3
+                        # else:
+                        #     print("level")
+                            self.current_level_index -= 1
+                            self.current_level = self.level_list[self.current_level_index]
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.game_state == GAME_RUNNING:
                     if self.current_level.pause_button_rect.collidepoint(mouse_pos):
@@ -289,30 +347,38 @@ class Game:
             if event.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
                 if self.game_state == GAME_MENU:
                     if self.menu.play_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.game_state = GAME_RUNNING
                     elif self.menu.settings_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.prev_game_state = GAME_MENU
                         self.game_state = GAME_SETTINGS
                     elif self.menu.exit_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         pygame.quit()
                         sys.exit()
                 elif self.game_state == GAME_SETTINGS:
                     if self.menu.back_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.game_state = self.prev_game_state
                 elif self.game_state == GAME_PAUSE:
                     if self.menu.conn_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.game_state = GAME_RUNNING
                     elif self.menu.settings_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.prev_game_state = GAME_PAUSE
                         self.game_state = GAME_SETTINGS
                     elif self.menu.back_button.handle_event(event, mouse_pos):
+                        self.menu.click_sound.play()
                         self.game_state = GAME_MENU
-        if pygame.mouse.get_pressed()[0]:
-            if self.game_state == GAME_SETTINGS:
-                if self.menu.volume_slider.collidepoint(mouse_pos):
-                    pygame.mixer.music.set_volume((mouse_pos[0]-300)/1000)
-                    self.menu.volume_slider_current_level = pygame.Rect(0, 0, pygame.mixer.music.get_volume()*1000, 20)
-                    self.menu.volume_slider_current_level.midleft = (300, 450)
+        if self.game_state == GAME_SETTINGS:
+            self.menu.volume_slider.handle_event(mouse_pos)
+            pygame.mixer.music.set_volume(self.menu.volume_slider.volume)
+            self.menu.sfx_volume_slider.handle_event(mouse_pos)
+            self.menu.click_sound.set_volume(self.menu.sfx_volume_slider.volume)
+            self.menu.volume_slider.click_sound.set_volume(self.menu.sfx_volume_slider.volume)
+            self.menu.sfx_volume_slider.click_sound.set_volume(self.menu.sfx_volume_slider.volume)
     def run(self):
         while True:
             if self.game_state == GAME_RUNNING:
