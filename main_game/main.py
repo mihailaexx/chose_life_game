@@ -155,6 +155,7 @@ class Level:
                  event_info_text1:str = "Event contain this information1", event_info_text2:str = "Event contain this information2", event_info_text3:str = "Event contain this information3",
                  after_event_text1:str = "After event contain this information1", after_event_text2:str = "After event contain this information2", after_event_text3:str = "After event contain this information3", after_event1_bg:str = "independence_hall.png",
                  after_event_text4:str = "After event contain this information1", after_event_text5:str = "After event contain this information2", after_event_text6:str = "After event contain this information3", after_event2_bg:str = "independence_hall.png",
+                 card1_img:str = "card1.png", card2_img:str = "card2.png", card3_img:str = "card3.png",
                  n_of_choises = 2, change_stats:list = None) -> None:
         
         self.bg = pygame.transform.scale(pygame.image.load(f"bg_imgs/{bg_img}"), (1600, 900))
@@ -163,6 +164,9 @@ class Level:
         self.bg_rect = self.bg.get_rect()
         self.font = pygame.font.SysFont("godofwar", 50)
         self.choosed_card = 1
+        self.card1_img = card1_img
+        self.card2_img = card2_img
+        self.card3_img = card3_img
         self.change_stats = change_stats
         
         self.event_info = pygame.transform.scale(pygame.image.load("assets/event/5.png"), (1000, 250))
@@ -220,12 +224,12 @@ class Level:
             screen.blit(self.event_info_text3, self.event_info_text_rect3)
 
             self.card1 = Button(image_center_pos=(525, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/card1.png"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
                                 text=self.card1_text, text_center_pos=(525, 800), font_size=36, text_color=(151,160,223))
             self.card1.draw(screen)
             
             self.card2 = Button(image_center_pos=(1075, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/card2.png"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
                                 text=self.card2_text, text_center_pos=(1075, 800), font_size=36, text_color=(151,160,223))
             self.card2.draw(screen)
         elif self.n_of_card == 3:
@@ -235,17 +239,17 @@ class Level:
             screen.blit(self.event_info_text3, self.event_info_text_rect3)
             
             self.card1 = Button(image_center_pos=(250, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/card1.png"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
                                 text=self.ard1_text, text_center_pos=(450, 800), font_size=36, text_color=(151,160,223))
             self.card1.draw(screen)
 
             self.card2 = Button(image_center_pos=(800, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/card2.png"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
                                 text=self.card2_text, text_center_pos=(800, 800), font_size=36, text_color=(151,160,223))
             self.card2.draw(screen)
 
             self.card3 = Button(image_center_pos=(1350, 650), 
-                                image=pygame.image.load(f"assets/level{current_level_index-1}/card3.png"), 
+                                image=pygame.image.load(f"assets/level{current_level_index-1}/{self.card1_img}"), 
                                 text=self.card3_text, text_center_pos=(1150, 800), font_size=36, text_color=(151,160,223))
             self.card3.draw(screen)
         
@@ -270,7 +274,7 @@ class Game:
             Level(bg_img="home.png" , event_info_text1="Your parents are happy that you", event_info_text2="received a scholarship for studies", event_info_text3="They gave you some money", card1_text="Buy programming course" , card2_text="Keep money for yourself", after_event_text1="Your fingers ran across", after_event_text2="the keyboard", after_event_text3="You gain knowledge", after_event_text4="You kept the money for yourself", after_event_text5="If you don't study, they will be", after_event_text6="useful to you", after_event1_bg="programm_course.png", after_event2_bg="ez_money.png"), # 2 лвл
             Level(bg_img="study.png" , event_info_text1="The introductory week flew by,", event_info_text2="you just went to classes and understand", event_info_text3="that you need to learn discrete", card1_text="Buy a course from an ad" , card2_text="Learn subject yourself", after_event_text1="You were unlucky :(", after_event_text2="The course you bought turned out ", after_event_text3="to be a dud and you lose money", after_event_text4="You decided to sit down and", after_event_text5="read the books on your own", after_event_text6="It was a good decision", after_event1_bg="loser.png", after_event2_bg="brain_power.png"), # 3 лвл
             Level(bg_img="beach.png" , event_info_text1="", event_info_text2="You are at the student initiation", event_info_text3="", card1_text="Watch concert in the rain" , card2_text="Hide from the rain", after_event_text1="", after_event_text2="You are wet but happy!", after_event_text3="", after_event_text4="Nothing much happened while", after_event_text5="you were in the building", after_event_text6="You missed the best part :(", after_event1_bg="wetnhappy.png", after_event2_bg="inbuilding.png"), # 4 лвл
-            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms you have free time", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 5 лвл
+            Level(bg_img="independence_hall.png" , event_info_text1="", event_info_text2="After a week of midterms", event_info_text3="you have free time", card1_text="Play basketball game" if BASKET else "Go to work" , card2_text="Go to club", after_event_text1="", after_event_text2="Your team won the championship" if BASKET else "After working for 3 hours you realized", after_event_text3="" if BASKET else "that this is not your thing", after_event_text4="", after_event_text5="You had a great time hanging out with friends", after_event_text6="", after_event1_bg="basket_win.png" if BASKET else "no_work.png", after_event2_bg="club.png"), # 5 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 6 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 7 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg="", n_of_choises=3), # 8 лвл
