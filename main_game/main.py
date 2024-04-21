@@ -179,7 +179,7 @@ class Level:
         self.after_evevt_text_rect2 = self.after_event_text2.get_rect(center=(800, 150))
         self.after_event_text3 = self.font.render(after_event_text3, True, (0, 0, 0))
         self.after_evevt_text_rect3 = self.after_event_text3.get_rect(center=(800, 200))
-        self.after_event_text4 = self.font.render(after_event_text5, True, (0, 0, 0))
+        self.after_event_text4 = self.font.render(after_event_text4, True, (0, 0, 0))
         self.after_evevt_text_rect4 = self.after_event_text4.get_rect(center=(800, 100))
         self.after_event_text5 = self.font.render(after_event_text5, True, (0, 0, 0))
         self.after_evevt_text_rect5 = self.after_event_text5.get_rect(center=(800, 150))
@@ -338,10 +338,12 @@ class Game:
                         if self.current_level.card1.collidepoint(mouse_pos):
                             if self.current_level.n_of_card != 0:
                                 print("card1")
+                                self.current_level.choosed_card = 1
                                 self.current_level.n_of_card = 0
                         elif self.current_level.card2.collidepoint(mouse_pos):
                             if self.current_level.n_of_card != 0:
                                 print("card2")
+                                self.current_level.choosed_card = 2
                                 self.current_level.n_of_card = 0
                     #!
             if event.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
