@@ -159,15 +159,15 @@ class Menu:
             exit_text = self.font.render("click anywhere to exit", True, (151,160,223))
             screen.blit(exit_text, exit_text.get_rect(center=(800, 850)))
             if fx == 0:
-                fx0_text = self.font.render("You don't have FX", True, (151,160,223))
+                fx0_text = self.font.render("You don't have FX!!!", True, (151,160,223))
                 screen.blit(fx0_text, fx0_text.get_rect(center=(800, 350)))
                 screen.blit(self.player_0fx, self.player_0fx.get_rect(center=(800, 550)))
             elif fx == 1:
-                fx1_text = self.font.render("You have FX", True, (151,160,223))
+                fx1_text = self.font.render("One FX, normal for first semester", True, (151,160,223))
                 screen.blit(fx1_text, fx1_text.get_rect(center=(800, 350)))
                 screen.blit(self.player_1fx, self.player_1fx.get_rect(center=(800, 550)))
             elif fx == 2:
-                fx2_text = self.font.render("You have FX", True, (151,160,223))
+                fx2_text = self.font.render("Two FX, try to learn more", True, (151,160,223))
                 screen.blit(fx2_text, fx2_text.get_rect(center=(800, 350)))
                 screen.blit(self.player_2fx, self.player_2fx.get_rect(center=(800, 550)))
         screen.blit(self.name, self.name_rect)
@@ -314,7 +314,7 @@ class Game:
             Level(bg_img="snow_almaty.png" , event_info_text1="It's been getting colder in Almaty lately", event_info_text2="The first snow even fell!", event_info_text3="But unfortunately you are sick", card1_text="Stay home" , card2_text="Still go to the lecture", after_event_text1="you missed one day and", after_event_text2="successfully recovered", after_event_text3="maybe the disease wasn't that bad", after_event_text4="You've completed today's classes", after_event_text5="There weren't many of them today", after_event_text6="and you didn't get sicker.", after_event1_bg="home_with_ill.png", after_event2_bg="snow_kbtu.png"), # 6 лвл
             Level(bg_img="deep_snow.png" , event_info_text1="Weekend passed and snow fell knee-deep", event_info_text2="Many students order a taxi", event_info_text3="Follow their example?", card1_text="Choose Taxi" , card2_text="Choose Bus", after_event_text1="You got to the university", after_event_text2="comfortably and made it to", after_event_text3="your classes on time", after_event_text4="Your feet were trampled and", after_event_text5="you were late for the lecture", after_event_text6="There are bad days in life :(", after_event1_bg="snow_kbtu.png", after_event2_bg="crowded_bus.png"), # 7 лвл
             Level(bg_img="final_exam.png" , event_info_text1="You are sitting for an exam", event_info_text2="Solve the last problem", event_info_text3="1573 mod 341", card1_text="207" , card2_text="189", card3_text="217", after_event_text1="", after_event_text2="Correct answer", after_event_text3="", after_event_text4="", after_event_text5="Incorrect answer", after_event_text6="", after_event1_bg="green.png", after_event2_bg="red.png", n_of_choises=3, change_stats=[{"fx": 0}, {"fx": 1}, {"fx": 1}]), # 8 лвл
-            # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 9 лвл
+            Level(bg_img="new_year.png" if not self.player.fx else "final_exam.png", event_info_text1="" if not self.player.fx else "Exam again...", event_info_text2="" if not self.player.fx else "You have 2nd attempt", event_info_text3="" if not self.player.fx else "1573 mod 341", card1_text="" if not self.player.fx else "189", card2_text="" if not self.player.fx else "207", after_event_text1="", after_event_text2="After successfully passing the exams" if not self.player.fx else "Incorrect answer", after_event_text3="you went home to your friends!" if not self.player.fx else "", after_event_text4="", after_event_text5="" if not self.player.fx else "Correct answer", after_event_text6="" if self.player.fx else "", after_event1_bg="red.png", after_event2_bg="green.png", n_of_choises=(2 if self.player.fx else 0), change_stats=[{"fx": 0}, {"fx": -1}]), # 9 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 10 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 11 лвл
             # Level(bg_img="" , event_info_text1="", event_info_text2="", event_info_text3="", card1_text="" , card2_text="", after_event_text1="", after_event_text2="", after_event_text3="", after_event_text4="", after_event_text5="", after_event_text6="", after_event1_bg="", after_event2_bg=""), # 12 лвл
